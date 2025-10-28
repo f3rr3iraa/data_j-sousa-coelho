@@ -1,0 +1,20 @@
+.container-navbar {
+    background-color: #22333B;
+}
+
+.img-navbar {
+    height: 60px;
+}
+
+
+.btn-reserve {
+  color: #ffffff;
+  background-color: #22333B;
+  border-color: #22333B;
+}
+
+.btn-reserve:hover {
+  color: #ffffff;              
+  background-color: #2e4752;   
+  border-color: #2e4752;     
+}

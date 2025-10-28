@@ -31,21 +31,21 @@ async function initHomeSupabaseSimplificada() {
     tableBody.innerHTML = data.map(item => `
       <tr data-id="${item.id}">
         <td>
-          <button class="btn btn-sm btn-outline-warning btn-reversar" title="Mover para Ordens">
-            <i class="bi bi-arrow-right-square"></i>
+          <button class="btn btn-sm btn-reserve btn-reversar">
+            Reservar
           </button>
         </td>
         <td>${item.nome}</td>
         <td>${item.comprimento ?? "-"}</td>
         <td>${item.largura ?? "-"}</td>
         <td>${item.tipo}</td>
-        <td>${item.observacoes ?? ""}</td>
         <td>
           ${item.foto 
             ? `<img src="${item.foto}" alt="foto" style="max-width:100px;height:60px;object-fit:cover;border-radius:4px;">`
             : "-"
           }
         </td>
+        <td>${item.observacoes ?? ""}</td>
       </tr>
     `).join("");
 
