@@ -18,3 +18,25 @@
   background-color: #2e4752;   
   border-color: #2e4752;     
 }
+
+
+#modalImg .modal-content {
+  background-color: transparent !important;
+  border: none;
+}
+
+#modalImgView {
+  max-height: 80vh;
+  object-fit: contain;
+  background-color: transparent;
+}
+
+#modalImg .btn-close:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+#modalImg .modal-header {
+  border: none !important;
+  box-shadow: none !important;
+}

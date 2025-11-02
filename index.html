@@ -124,6 +124,21 @@
 
 </body>
 
+<!-- Modal para visualizar imagem -->
+<div class="modal fade" id="modalImg" tabindex="-1" aria-labelledby="modalImgLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content bg-dark">
+      <div class="modal-header border-0">
+        <button type="button" class="btn-close btn-close-white ms-auto" data-bs-dismiss="modal" aria-label="Fechar"></button>
+      </div>
+      <div class="modal-body text-center">
+        <img id="modalImgView" src="" class="img-fluid rounded" alt="Imagem do produto">
+      </div>
+    </div>
+  </div>
+</div>
+
+
 <script>
   // carregar prod on
   initHomeSupabaseSimplificada();
