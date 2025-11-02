@@ -35,12 +35,57 @@
     </div>
   </nav>
 
+  <!-- 🔍 Filtros -->
+  <div id="filtrosContainer" class="container-fluid mb-3">
+    <div class="row g-2 d-flex align-items-center col-12">
+      <!-- Marca -->
+      <div class="col-3  d-flex align-items-center">
+        <div class="coolinput w-100">
+          <label for="filtroMarca" class="text">Marca</label>
+          <select id="filtroMarca" class="input w-100">
+            <option value="">Todas</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Nome -->
+      <div class="col-3 d-flex align-items-center">
+        <div class="coolinput w-100">
+          <label for="filtroNome" class="text">Nome</label>
+          <input type="text" id="filtroNome" class="input w-100" placeholder="Pesquisar por nome...">
+        </div>
+      </div>
+
+      <!-- Tipo -->
+      <div class="col-3 d-flex align-items-center">
+        <div class="coolinput w-100">
+          <label for="filtroTipo" class="text">Tipo</label>
+          <select id="filtroTipo" class="input w-100">
+            <option value="">Todos</option>
+            <option value="Peça">Peça</option>
+            <option value="Chapa">Chapa</option>
+          </select>
+        </div>
+      </div>
+
+
+      <!-- Botão -->
+      <div class="col-2 d-flex align-items-end">
+        <button id="btnLimparFiltros" class="btn-form">Limpar Filtros</button>
+      </div>
+    </div>
+  </div>
+
+
+
+
+
   <div class="table-responsive">
     <table class="table table-striped table-bordered align-middle text-center">
-      <thead class="table-dark">
+      <thead class="table-color">
         <tr>
           <th class="col-1">Reversar</th>
-          <th class="col-3">Nome/Marca</th>
+          <th class="col-3">Marca/Nome</th>
           <th class="col-1">Comprimento</th>
           <th class="col-1">Largura</th>
           <th class="col-1">Tipo</th>
@@ -50,58 +95,93 @@
       </thead>
       <tbody id="itemsBody">
         <tr>
-          <td colspan="8">A carregar dados...</td>
+          <td colspan="7">A carregar dados...</td>
         </tr>
       </tbody>
     </table>
   </div>
 
-  <!-- Modal Reservar -->
+  <!-- Controlo de paginação e filtro -->
+  <div class="d-flex justify-content-between align-items-center px-4 py-3 flex-wrap">
+    <!-- Filtro de quantidade -->
+    <div class="mb-2 mb-md-0">
+      <label for="itemsPerPage" class="me-2 fw-bold">Itens por página:</label>
+      <select id="itemsPerPage" class="form-select d-inline-block w-auto">
+        <option value="25">25</option>
+        <option value="50">50</option>
+        <option value="100" selected>100</option>
+        <option value="200">200</option>
+      </select>
+    </div>
+
+    <!-- Paginação -->
+    <nav aria-label="Navegação de páginas" class="mb-2 mb-md-0">
+      <ul class="pagination mb-0" id="paginationControls">
+        <li class="page-item"><button class="page-link" id="prevPage"><i class="bi bi-caret-left-fill"></i></button>
+        </li>
+        <li class="page-item disabled"><span class="page-link" id="pageIndicator">1</span></li>
+        <li class="page-item"><button class="page-link" id="nextPage"><i class="bi bi-caret-right-fill"></i></button>
+        </li>
+      </ul>
+    </nav>
+  </div>
+
+
+
+  <!-- Modal Reservar (fullscreen até 992px) -->
   <div class="modal fade" id="reserveModal" tabindex="-1" aria-labelledby="reserveModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-xl">
-      <div class="modal-content">
-        <div class="modal-header">
+    <div class="modal-dialog modal-dialog-centered modal-xl modal-fullscreen-md-down">
+      <div class="modal-content bg-modal">
+        <div class="modal-header text-dark">
           <h5 class="modal-title" id="reserveModalLabel">Reservar Produto</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+          <button type="button" class="btn-close btn-close-dark no-outline" data-bs-dismiss="modal"
+            aria-label="Fechar"></button>
         </div>
-        <div class="modal-body">
-          <div class="row">
+
+        <div class="modal-body px-4 py-3">
+          <div class="row g-4 align-items-start">
             <!-- Formulário -->
-            <div class="col-md-6">
-              <form id="contactForm" method="POST" action="/send">
-                <div class="mb-3">
-                  <label for="nome" class="form-label">Nome</label>
-                  <input type="text" id="nome" name="nome" class="form-control" required>
+            <div class="col-12 col-lg-6">
+  
+              <form id="contactForm" method="POST" action="/send" class="d-flex flex-column h-100">
+                <div class="flex-grow-1 overflow-auto pe-2">
+
+                  <h5><strong>Informações de Contacto</strong></h5>
+                  <div class="coolinput">
+                    <label for="nome" class="text">Nome</label>
+                    <input type="text" id="nome" name="nome" class="input" required>
+                  </div>
+
+                  <div class="coolinput">
+                    <label for="empresa" class="text">Empresa</label>
+                    <input type="text" id="empresa" name="empresa" class="input" required>
+                  </div>
+
+                  <div class="coolinput">
+                    <label for="email" class="text">Email</label>
+                    <input type="email" id="email" name="email" class="input" required>
+                  </div>
+
+                  <div class="coolinput">
+                    <label for="telefone" class="text">Telefone</label>
+                    <input type="tel" id="telefone" name="telefone" class="input" required>
+                  </div>
+
+                  <div class="coolinput">
+                    <label for="observacoes" class="text">Observações (Opcional)</label>
+                    <textarea id="observacoes" name="observacoes" class="input" rows="4" style="resize: none; height: 110px;"></textarea>
+                  </div>
+
                 </div>
 
-                <div class="mb-3">
-                  <label for="empresa" class="form-label">Empresa</label>
-                  <input type="text" id="empresa" name="empresa" class="form-control">
+                <div class="mt-3">
+                  <button type="submit" class="btn-form w-100 py-2">Enviar Pedido</button>
                 </div>
-
-                <div class="mb-3">
-                  <label for="email" class="form-label">Email</label>
-                  <input type="email" id="email" name="email" class="form-control" required>
-                </div>
-
-                <div class="mb-3">
-                  <label for="telefone" class="form-label">Telefone</label>
-                  <input type="tel" id="telefone" name="telefone" class="form-control">
-                </div>
-
-                <div class="mb-3">
-                  <label for="observacoes" class="form-label">Observações</label>
-                  <textarea id="observacoes" name="observacoes" class="form-control" rows="4"></textarea>
-                </div>
-
-                <button type="submit" class="btn btn-primary w-100">Enviar</button>
               </form>
-
-              <div id="msg" class="mt-3 text-center"></div>
             </div>
 
-            <!-- inf do produto -->
-            <div class="col-md-6" id="reserveProductInfo">
+            <!-- Informação do produto -->
+            <div class="col-12 col-lg-6" id="reserveProductInfo" style="max-height:70vh; overflow-y:auto;">
             </div>
           </div>
         </div>
@@ -109,17 +189,22 @@
     </div>
   </div>
 
-<!-- Toast de notificação -->
-<div id="toastContainer" class="position-fixed bottom-0 end-0 p-3" style="z-index: 9999;">
-  <div id="liveToast" class="toast align-items-center text-bg-primary border-0" role="alert" aria-live="assertive" aria-atomic="true">
-    <div class="d-flex">
-      <div class="toast-body" id="toastMessage">
 
+
+
+  <!-- Toast de notificação -->
+  <div id="toastContainer" class="position-fixed bottom-0 end-0 p-3" style="z-index: 9999;">
+    <div id="liveToast" class="toast align-items-center text-bg-primary border-0" role="alert" aria-live="assertive"
+      aria-atomic="true">
+      <div class="d-flex">
+        <div class="toast-body" id="toastMessage">
+
+        </div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+          aria-label="Fechar"></button>
       </div>
-      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Fechar"></button>
     </div>
   </div>
-</div>
 
 
 </body>
@@ -129,7 +214,8 @@
   <div class="modal-dialog modal-dialog-centered modal-lg">
     <div class="modal-content bg-dark">
       <div class="modal-header border-0">
-        <button type="button" class="btn-close btn-close-white ms-auto" data-bs-dismiss="modal" aria-label="Fechar"></button>
+        <button type="button" class="btn-close btn-close-white ms-auto" data-bs-dismiss="modal"
+          aria-label="Fechar"></button>
       </div>
       <div class="modal-body text-center">
         <img id="modalImgView" src="" class="img-fluid rounded" alt="Imagem do produto">
