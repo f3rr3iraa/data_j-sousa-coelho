@@ -23,11 +23,12 @@ async function sendMail(data) {
   });
 
   const produto = data.produto || {};
+  const marcaenomeeespessura = `${produto.marca ?? ""} - ${produto.nome ?? ""} ${produto.espessura ?? ""}`;
   const mailOptions = {
   from: `"${data.nome} - ${data.empresa}" <${process.env.SMTP_USER}>`,
   replyTo: data.email,
   to: process.env.SMTP_USER,
-  subject: `Reserva da Referência - ${produto.id} | ${produto.nome}`,
+  subject: `Reserva da Referência - ${produto.id} | ${marcaenomeeespessura}`,
   html: `
     <h3>📦 Novo Pedido de Reserva</h3>
     <p><b>Referência:</b> ${produto.id}</p>
@@ -35,17 +36,18 @@ async function sendMail(data) {
     <p><b>Empresa:</b> ${data.empresa}</p>
     <p><b>Email:</b> ${data.email}</p>
     <p><b>Telefone:</b> ${data.telefone}</p>
-    <p><b>Observações:</b>${data.observacoes}</p>
+    <p><b>Observação:</b>${data.observacoes}</p>
 
     <hr>
 
     <h4>📑 Produto Reservado</h4>
-    <p><b>Nome:</b> ${produto.nome}</p>
-    <p><b>Comprimento:</b> ${produto.comprimento ?? "-"}</p>
-    <p><b>Largura:</b> ${produto.largura ?? "-"}</p>
-    <p><b>Tipo:</b> ${produto.tipo}</p>
-    <p><b>Observações:</b>${produto.observacoes ?? "-"}</p>
-    ${produto.foto ? `<img src="${produto.foto}" style="max-width:300px;border-radius:6px;">` : ""}
+    <p><b>Nome/Marca:</b> ${marcaenomeeespessura}</p>
+    <p><b>Comprimento:</b> ${produto.comprimento ?? ""}</p>
+    <p><b>Largura:</b> ${produto.largura ?? ""}</p>
+    <p><b>Lote:</b> ${produto.lote ?? ""}</p>
+    <p><b>Tipo:</b> ${produto.tipo ?? ""} </p>
+    <p><b>Observação:</b>${produto.observacoes ?? ""}</p>
+    ${produto.foto ? `<img src="${produto.foto}" style="max-width:300px;">` : ""}
 
     <hr>
   `,
@@ -69,6 +71,6 @@ app.get("/", (req, res) => {
   res.sendFile(__dirname + "/index.html");
 });
 
-app.listen(3000, () =>
-  console.log("✅ Servidor a correr em: http://localhost:3000")
+app.listen(3001, () =>
+  console.log("✅ Servidor a correr em: http://localhost:3001")
 );

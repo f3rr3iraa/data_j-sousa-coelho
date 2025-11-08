@@ -34,23 +34,21 @@ let filtros = {
 async function carregarMarcas() {
   const { data, error } = await supabaseClient
     .from("items")
-    .select("nome");
+    .select("marca");
 
   if (error) {
     console.error("Erro ao carregar marcas:", error);
     return;
   }
 
-  const marcas = data
-    .map(i => i.nome?.split(" ")[0]?.trim())
+  // Normalizar marcas para primeira letra maiúscula e resto minúscula
+  const marcasNormalizadas = data
+    .map(i => i.marca?.trim())
     .filter(Boolean)
-    .filter((v, i, arr) => arr.indexOf(v) === i); // remover duplicados
+    .map(m => m.charAt(0).toUpperCase() + m.slice(1).toLowerCase());
 
-  // Se houver "dekton" e "Dekton", mantém só a com maiúscula
-  const marcasUnicas = marcas.filter(m => {
-    const hasUpper = marcas.includes(m.charAt(0).toUpperCase() + m.slice(1));
-    return !/^[a-z]/.test(m) || !hasUpper;
-  }).sort();
+  // Remover duplicados
+  const marcasUnicas = [...new Set(marcasNormalizadas)].sort();
 
   const select = document.getElementById("filtroMarca");
   if (!select) return;
@@ -62,6 +60,7 @@ async function carregarMarcas() {
     select.appendChild(opt);
   });
 }
+
 
 // === Botão "Limpar Filtros" ===
 const btnLimparFiltros = document.getElementById("btnLimparFiltros");
@@ -111,7 +110,7 @@ async function initHomeSupabaseSimplificada(filtroEstado = 'on') {
       .select("*")
       .eq("estado", filtroEstado);
 
-    if (filtros.marca) query = query.ilike("nome", `${filtros.marca}%`);
+    if (filtros.marca) query = query.ilike("marca", `${filtros.marca}%`);
     if (filtros.nome) query = query.ilike("nome", `%${filtros.nome}%`);
     if (filtros.tipo) query = query.eq("tipo", filtros.tipo);
 
@@ -132,19 +131,24 @@ async function initHomeSupabaseSimplificada(filtroEstado = 'on') {
     }
 
     // Renderizar tabela
-    tableBody.innerHTML = data.map(item => `
-      <tr data-id="${item.id}">
-        ${filtroEstado === 'on' ? `
-        <td><button class="btn btn-sm btn-reserve btn-reversar">Reservar</button></td>` : ""}
-        <td>${item.nome ?? "-"}</td>
-        <td>${item.comprimento ?? "-"}</td>
-        <td>${item.largura ?? "-"}</td>
-        <td>${item.tipo ?? "-"}</td>
-        <td>${item.foto ? `<img src="${item.foto}" alt="foto" style="max-width:100px;height:60px;object-fit:cover;border-radius:4px;">` : "-"}</td>
-        <td>${item.observacoes ?? ""}</td>
-        ${filtroEstado === 'off' ? `<td>${item.data_off ? new Date(item.data_off).toLocaleString("pt-PT") : "-"}</td>` : ""}
-      </tr>
-    `).join("");
+
+    tableBody.innerHTML = data.map(item => {
+      const marcaenomeeespessura = `${item.marca ?? ""} - ${item.nome ?? ""} ${item.espessura ?? ""}`;
+      return `
+    <tr data-id="${item.id}">
+      ${filtroEstado === 'on' ? `
+      <td><button class="btn btn-sm btn-reserve btn-reversar">Reservar</button></td>` : ""}
+      <td>${marcaenomeeespessura ?? ""}</td>
+      <td>${item.comprimento ?? ""}</td>
+      <td>${item.largura ?? ""}</td>
+      <td>${item.lote ?? ""}</td>
+      <td>${item.tipo ?? ""}</td>
+      <td>${item.foto ? `<img src="${item.foto}" alt="foto" style="max-width:100px;height:60px;object-fit:cover;">` : ""}</td>
+      <td>${item.observacoes ?? ""}</td>
+      ${filtroEstado === 'off' ? `<td>${item.data_off ? new Date(item.data_off).toLocaleString("pt-PT") : ""}</td>` : ""}
+    </tr>
+  `;
+    }).join("");
 
     // Atualizar indicador de página
     document.getElementById("pageIndicator").textContent = `${currentPage} / ${totalPages}`;
@@ -169,13 +173,16 @@ async function initHomeSupabaseSimplificada(filtroEstado = 'on') {
 
           produtoSelecionado = item;
           const infoDiv = document.getElementById("reserveProductInfo");
+          const marcaenomeeespessura = `${item.marca ?? ""} - ${item.nome ?? ""} ${item.espessura ?? ""}`;
           infoDiv.innerHTML = `
-            <h5><strong>Produto</strong></h5>
-            <p><strong>Nome:</strong> ${item.nome}</p>
-            <p><strong>Comprimento:</strong> ${item.comprimento}</p>
-            <p><strong>Largura:</strong> ${item.largura}</p>
-            <p><strong>Tipo:</strong> ${item.tipo}</p>
-            <p><strong>Observações:</strong> ${item.observacoes ?? "-"}</p>
+            <h5><strong>Informações do Produto</strong></h5>
+            <p class="mb-1"><strong>Marca/Nome:</strong> ${marcaenomeeespessura ?? ""}</p>
+            <p class="mb-1"><strong>Comprimento:</strong> ${item.comprimento ?? ""}</p>
+            <p class="mb-1"><strong>Largura:</strong> ${item.largura ?? ""}</p>
+            <p class="mb-1"><strong>Lote:</strong> ${item.lote ?? ""}</p>
+            <p class="mb-1"><strong>Comprimento:</strong> ${item.lote ?? ""}</p>
+            <p class="mb-1"><strong>Tipo:</strong> ${item.tipo ?? ""}</p>
+            <p class="mb-1"><strong>Observação:</strong> ${item.observacoes ?? ""}</p>
             ${item.foto ? `<img src="${item.foto}" class="img-fluid rounded" alt="foto" style="height: 325px; width: auto;">` : ""}
           `;
           new bootstrap.Modal(document.getElementById("reserveModal")).show();
@@ -257,23 +264,23 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   // === Botão "Limpar Filtros" ===
-const btnLimparFiltros = document.getElementById("btnLimparFiltros");
-if (btnLimparFiltros) {
-  btnLimparFiltros.addEventListener("click", () => {
-    // resetar valores
-    filtros = { marca: "", nome: "", tipo: "" };
-    document.getElementById("filtroMarca").value = "";
-    document.getElementById("filtroNome").value = "";
-    document.getElementById("filtroTipo").value = "";
+  const btnLimparFiltros = document.getElementById("btnLimparFiltros");
+  if (btnLimparFiltros) {
+    btnLimparFiltros.addEventListener("click", () => {
+      // resetar valores
+      filtros = { marca: "", nome: "", tipo: "" };
+      document.getElementById("filtroMarca").value = "";
+      document.getElementById("filtroNome").value = "";
+      document.getElementById("filtroTipo").value = "";
 
-    // voltar para primeira página
-    currentPage = 1;
+      // voltar para primeira página
+      currentPage = 1;
 
-    // recarregar os dados
-    initHomeSupabaseSimplificada();
+      // recarregar os dados
+      initHomeSupabaseSimplificada();
 
-  });
-}
+    });
+  }
 
 });
 
@@ -332,7 +339,7 @@ document.addEventListener("DOMContentLoaded", () => {
 // === Modal de imagem ===
 document.addEventListener("click", (e) => {
   const img = e.target.closest("img");
-  if (img && img.src && img.closest("table, #reserveProductInfo")) {
+  if (img && img.src && img.closest("table")) {
     const modalImg = document.getElementById("modalImgView");
     modalImg.src = img.src;
 
